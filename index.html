@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CyberBrief">
+  <meta name="theme-color" content="#060610">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <title>CyberBrief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Azeret+Mono:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#060610;--sf:rgba(255,255,255,0.024);--sfh:rgba(255,255,255,0.048);
+      --bd:rgba(255,255,255,0.058);--bdh:rgba(255,255,255,0.13);
+      --t1:#ededf0;--t2:rgba(255,255,255,0.50);--t3:rgba(255,255,255,0.22);
+      --cy:#00e5ff;--rd:#ff3d57;--am:#ffab00;--gn:#00e676;--bl:#448aff;--pu:#b388ff;--pk:#ff80ab;
+      --df:'Instrument Sans',sans-serif;--mn:'Azeret Mono',monospace;--sr:'Newsreader',serif;
+      --r:13px;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+    body{font-family:var(--df);background:var(--bg);color:var(--t1);min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;padding-top:var(--sat);padding-bottom:var(--sab)}
+    .amb{position:fixed;inset:0;pointer-events:none;z-index:0}
+    .amb::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 40% at 10% 5%,rgba(0,229,255,0.04),transparent),radial-gradient(ellipse 40% 50% at 90% 90%,rgba(255,61,87,0.025),transparent)}
+    .amb::after{content:'';position:absolute;inset:0;opacity:0.016;background-image:linear-gradient(rgba(255,255,255,0.12) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.12) 1px,transparent 1px);background-size:50px 50px}
+    .w{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:28px 16px 56px}
+    @media(min-width:640px){.w{padding:44px 24px 72px}}
+
+    .hdr{margin-bottom:28px}
+    .st{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--gn);box-shadow:0 0 8px rgba(0,230,118,0.5);transition:0.4s}
+    .dot.on{background:var(--am);box-shadow:0 0 8px rgba(255,171,0,0.5);animation:blink 1.3s ease-in-out infinite}
+    .st span{font-family:var(--mn);font-size:9.5px;font-weight:500;color:var(--t3);letter-spacing:2.5px;text-transform:uppercase}
+    .brand{font-family:var(--df);font-weight:700;font-size:clamp(30px,7.5vw,50px);letter-spacing:-2.5px;line-height:1;margin-bottom:6px}
+    .brand em{font-family:var(--sr);font-style:italic;font-weight:600;background:linear-gradient(135deg,var(--cy),var(--bl));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .sub{font-family:var(--mn);font-size:11px;color:var(--t3);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+    .sub .lv{color:var(--gn);font-size:10px;opacity:0.7}
+    .badge-free{display:inline-block;margin-left:6px;font-family:var(--mn);font-size:9px;background:rgba(0,230,118,0.1);color:var(--gn);padding:2px 7px;border-radius:4px;border:1px solid rgba(0,230,118,0.2);letter-spacing:0.5px}
+
+    /* Tabs */
+    .tabs{display:flex;gap:4px;margin-bottom:24px;background:rgba(255,255,255,0.02);border:1px solid var(--bd);border-radius:11px;padding:4px}
+    .tb{flex:1;text-align:center;padding:11px 8px;border-radius:8px;font-family:var(--df);font-weight:600;font-size:13px;color:var(--t2);cursor:pointer;transition:0.25s;border:1px solid transparent;-webkit-tap-highlight-color:transparent}
+    .tb:active{transform:scale(0.97)}
+    .tb.on{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.18);color:var(--cy)}
+    .tb .ic{font-size:15px;margin-right:5px;vertical-align:middle}
+    .tb .bc{display:inline-block;font-family:var(--mn);font-size:9px;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;margin-left:5px}
+    .tb.on .bc{background:rgba(0,229,255,0.12)}
+
+    .pn{display:none}.pn.sh{display:block}
+
+    /* Stats */
+    .sts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px}
+    .sts.hd{display:none}
+    .sc{background:var(--sf);border:1px solid var(--bd);border-radius:11px;padding:13px 14px}
+    .sc-l{font-family:var(--mn);font-size:8.5px;color:var(--t3);letter-spacing:1.5px;margin-bottom:3px}
+    .sc-v{font-family:var(--df);font-weight:700;font-size:25px}
+
+    /* Filters */
+    .fl{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+    .fl::-webkit-scrollbar{display:none}
+    .fb{flex-shrink:0;display:flex;align-items:center;gap:5px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;color:var(--t2);font-family:var(--mn);font-size:10.5px;font-weight:500;cursor:pointer;transition:0.2s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+    .fb:active{transform:scale(0.95)}
+    .fb.on{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.22);color:var(--cy)}
+    .fb .c{font-size:9px;background:rgba(255,255,255,0.05);padding:1px 5px;border-radius:3px}
+    .fb.on .c{background:rgba(0,229,255,0.12)}
+    .rb{flex-shrink:0;margin-left:auto;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;color:var(--t3);font-family:var(--mn);font-size:10.5px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .rb:active{transform:scale(0.95);color:var(--cy)}
+
+    /* Cards */
+    .cds{display:flex;flex-direction:column;gap:10px}
+    .cd{position:relative;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px 20px 20px 24px;transition:0.3s cubic-bezier(0.4,0,0.2,1);overflow:hidden}
+    @media(hover:hover){.cd:hover{background:var(--sfh);border-color:var(--bdh);transform:translateY(-1px)}}
+    .cd:active{transform:scale(0.99)}
+    .br{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px}
+    .ct{display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+    .bg{padding:2.5px 8px;border-radius:4px;font-family:var(--mn);font-size:8.5px;font-weight:700;letter-spacing:1.2px}
+    .b-critical{background:rgba(255,61,87,0.12);color:#ff6b80;border:1px solid rgba(255,61,87,0.2)}
+    .b-high{background:rgba(255,171,0,0.1);color:#ffc14d;border:1px solid rgba(255,171,0,0.18)}
+    .b-medium{background:rgba(0,230,118,0.08);color:#4de89a;border:1px solid rgba(0,230,118,0.14)}
+    .b-low{background:rgba(0,229,255,0.08);color:#5dd8ff;border:1px solid rgba(0,229,255,0.14)}
+    .b-conference{background:rgba(68,138,255,0.1);color:#6da3ff;border:1px solid rgba(68,138,255,0.2)}
+    .b-scholarship{background:rgba(0,230,118,0.1);color:#4de89a;border:1px solid rgba(0,230,118,0.18)}
+    .b-volunteer{background:rgba(179,136,255,0.1);color:#c9a8ff;border:1px solid rgba(179,136,255,0.18)}
+    .b-student_program{background:rgba(255,128,171,0.1);color:#ffa0bf;border:1px solid rgba(255,128,171,0.18)}
+    .b-cfp{background:rgba(255,171,0,0.1);color:#ffc14d;border:1px solid rgba(255,171,0,0.18)}
+    .u-deadline_soon{background:rgba(255,61,87,0.12);color:#ff6b80;border:1px solid rgba(255,61,87,0.22)}
+    .u-upcoming{background:rgba(255,171,0,0.1);color:#ffc14d;border:1px solid rgba(255,171,0,0.18)}
+    .u-open{background:rgba(0,230,118,0.08);color:#4de89a;border:1px solid rgba(0,230,118,0.14)}
+    .u-future{background:rgba(0,229,255,0.08);color:#5dd8ff;border:1px solid rgba(0,229,255,0.14)}
+    .tg{padding:2.5px 8px;border-radius:4px;background:rgba(255,255,255,0.04);font-family:var(--mn);font-size:8.5px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:0.4px}
+    .sr{font-family:var(--mn);font-size:9.5px;color:var(--t3);margin-left:auto}
+    .cd h3{font-family:var(--df);font-weight:600;font-size:15px;line-height:1.48;color:var(--t1);margin-bottom:7px}
+    .cd p{font-family:var(--df);font-weight:400;font-size:13px;line-height:1.72;color:var(--t2)}
+    .cd a{display:inline-block;margin-top:10px;font-family:var(--mn);font-size:10.5px;color:var(--cy);text-decoration:none;opacity:0.6;transition:0.2s}
+    .cd a:hover,.cd a:active{opacity:1}
+    .cm{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .ch{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-family:var(--mn);font-size:9.5px;font-weight:500;background:rgba(255,255,255,0.03);border:1px solid var(--bd);color:var(--t2)}
+    .ch .ic{font-size:11px}
+    .ch.dl{border-color:rgba(255,61,87,0.2);color:#ff6b80;background:rgba(255,61,87,0.06)}
+    .ch.fr{border-color:rgba(0,230,118,0.2);color:#4de89a;background:rgba(0,230,118,0.06)}
+
+    /* States */
+    .ini{text-align:center;padding:50px 12px}
+    .ini-i{width:80px;height:80px;margin:0 auto 16px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px}
+    .ini-i.nw{background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.1)}
+    .ini-i.cf{background:rgba(179,136,255,0.05);border:1px solid rgba(179,136,255,0.1)}
+    .ini p{color:var(--t2);font-size:14px;line-height:1.65;max-width:360px;margin:0 auto 24px}
+    .go{display:inline-flex;align-items:center;gap:8px;color:#fff;border:none;border-radius:12px;padding:14px 30px;font-family:var(--df);font-weight:600;font-size:14.5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:0.3s}
+    .go:active{transform:scale(0.96)}
+    .go.nb{background:linear-gradient(135deg,var(--cy),var(--bl));box-shadow:0 4px 20px rgba(0,229,255,0.18)}
+    .go.cb{background:linear-gradient(135deg,var(--pu),var(--pk));box-shadow:0 4px 20px rgba(179,136,255,0.18)}
+    .ldi{text-align:center;margin-bottom:24px}
+    .ldp{font-family:var(--mn);font-size:12px;margin-bottom:12px}
+    .ldp.np{color:var(--cy)}.ldp.cp{color:var(--pu)}
+    .ldb{width:160px;height:2px;background:rgba(255,255,255,0.05);border-radius:2px;margin:0 auto 8px;overflow:hidden}
+    .ldf{width:30%;height:100%;animation:shimmer 1.5s ease-in-out infinite}
+    .ldf.nf{background:linear-gradient(90deg,transparent,var(--cy),transparent)}
+    .ldf.cff{background:linear-gradient(90deg,transparent,var(--pu),transparent)}
+    .ldh{font-family:var(--mn);font-size:9.5px;color:var(--t3)}
+    .sk{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;animation:pulse 1.8s ease-in-out infinite}
+    .skb{background:rgba(255,255,255,0.035);border-radius:4px}
+    .eb{background:rgba(255,61,87,0.06);border:1px solid rgba(255,61,87,0.14);border-radius:var(--r);padding:20px;margin-bottom:16px}
+    .em{font-family:var(--mn);font-size:12px;color:#ff6b80;line-height:1.6;margin-bottom:12px;word-break:break-word}
+    .er{background:rgba(255,61,87,0.1);border:1px solid rgba(255,61,87,0.18);border-radius:8px;padding:9px 16px;color:#ff6b80;font-family:var(--mn);font-size:11px;cursor:pointer}
+    .ey{text-align:center;padding:40px 12px;color:var(--t3);font-family:var(--mn);font-size:11px}
+    .ft{margin-top:48px;padding-top:18px;border-top:1px solid var(--bd);text-align:center;font-family:var(--mn);font-size:9.5px;color:var(--t3);letter-spacing:0.3px}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{opacity:0.45}50%{opacity:0.75}}
+    @keyframes blink{0%,100%{opacity:0.3}50%{opacity:1}}
+    @keyframes shimmer{0%{transform:translateX(-250%)}100%{transform:translateX(500%)}}
+    .an{animation:fadeUp 0.45s ease-out both}
+  </style>
+</head>
+<body>
+<div class="amb"></div>
+<div class="w">
+  <header class="hdr">
+    <div class="st"><div class="dot" id="dot"></div><span id="sTxt">SECURE — INTEL FEED</span></div>
+    <div class="brand">Cyber<em>Brief</em> <span class="badge-free">100% FREE</span></div>
+    <div class="sub"><span id="dateStr"></span><span class="lv" id="lv" style="display:none"></span></div>
+  </header>
+
+  <div class="tabs">
+    <div class="tb on" id="t1" onclick="sw('news')"><span class="ic">🛡</span>Daily Intel<span class="bc" id="n1" style="display:none">0</span></div>
+    <div class="tb" id="t2" onclick="sw('conf')"><span class="ic">🎓</span>Conferences<span class="bc" id="n2" style="display:none">0</span></div>
+  </div>
+
+  <div class="pn sh" id="p1">
+    <div class="sts hd" id="ns"><div class="sc"><div class="sc-l">TOTAL</div><div class="sc-v" id="nT" style="color:var(--cy)">0</div></div><div class="sc"><div class="sc-l">CRITICAL</div><div class="sc-v" id="nC" style="color:var(--rd)">0</div></div><div class="sc"><div class="sc-l">SOURCES</div><div class="sc-v" id="nS" style="color:var(--am)">0</div></div></div>
+    <div id="nc"></div>
+  </div>
+
+  <div class="pn" id="p2">
+    <div class="sts hd" id="cs"><div class="sc"><div class="sc-l">TOTAL</div><div class="sc-v" id="cT" style="color:var(--pu)">0</div></div><div class="sc"><div class="sc-l">SCHOLARSHIPS</div><div class="sc-v" id="cS" style="color:var(--gn)">0</div></div><div class="sc"><div class="sc-l">VOLUNTEER</div><div class="sc-v" id="cV" style="color:var(--pk)">0</div></div></div>
+    <div id="cc"></div>
+  </div>
+
+  <div class="ft">CYBERBRIEF v3 — 100% Free · RSS Feeds · No API Key Required</div>
+</div>
+
+<script>
+let tab='news',nI=[],cI=[],nF='all',cF='all',nL=false,cL=false,nD=null,cD=null;
+const NC=[{id:'all',l:'All',i:'◉'},{id:'threats',l:'Threats',i:'⚠'},{id:'vulnerabilities',l:'Vulns',i:'🛡'},{id:'breaches',l:'Breaches',i:'🔓'},{id:'cloud',l:'Cloud',i:'☁'},{id:'ai',l:'AI',i:'🤖'},{id:'policy',l:'Policy',i:'📜'}];
+const CC=[{id:'all',l:'All',i:'◉'},{id:'conference',l:'Events',i:'📅'},{id:'scholarship',l:'Scholarships',i:'🎓'},{id:'volunteer',l:'Volunteer',i:'🤝'},{id:'student_program',l:'Student',i:'👩‍💻'},{id:'cfp',l:'CFP',i:'📝'}];
+const AC={critical:'var(--rd)',high:'var(--am)',medium:'var(--gn)',low:'var(--cy)'};
+const TC={conference:'var(--bl)',scholarship:'var(--gn)',volunteer:'var(--pu)',student_program:'var(--pk)',cfp:'var(--am)'};
+
+document.getElementById('dateStr').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// Cache
+try{const c=localStorage.getItem('cb3_news');if(c){const d=JSON.parse(c);if(Date.now()-d.ts<30*60000){nI=d.items;nD=new Date(d.ts)}}}catch(e){}
+try{const c=localStorage.getItem('cb3_conf');if(c){const d=JSON.parse(c);if(Date.now()-d.ts<60*60000){cI=d.items;cD=new Date(d.ts)}}}catch(e){}
+
+render();
+
+function sw(t){tab=t;document.getElementById('t1').classList.toggle('on',t==='news');document.getElementById('t2').classList.toggle('on',t==='conf');document.getElementById('p1').classList.toggle('sh',t==='news');document.getElementById('p2').classList.toggle('sh',t==='conf');render()}
+
+function render(){
+  if(tab==='news'){if(nI.length)rNews();else if(!nL)rInit('news')}
+  else{if(cI.length)rConf();else if(!cL)rInit('conf')}
+  ub();
+}
+function ub(){
+  const a=document.getElementById('n1'),b=document.getElementById('n2');
+  if(nI.length){a.style.display='inline';a.textContent=nI.length}else a.style.display='none';
+  if(cI.length){b.style.display='inline';b.textContent=cI.length}else b.style.display='none';
+}
+
+// ═══ FETCH ═══
+async function fN(){
+  if(nL)return;nL=true;nI=[];nF='all';setDot(true);rLoad('news');
+  try{
+    const r=await fetch('/api/news');
+    if(!r.ok){const b=await r.json().catch(()=>({error:`HTTP ${r.status}`}));throw new Error(b.error)}
+    const d=await r.json();
+    if(!d.items?.length)throw new Error('No news found.');
+    nI=d.items;nD=new Date();
+    try{localStorage.setItem('cb3_news',JSON.stringify({items:nI,ts:Date.now()}))}catch(e){}
+    rNews();
+  }catch(e){rErr('news',e.message)}
+  finally{nL=false;setDot(false);ub()}
+}
+
+async function fC(){
+  if(cL)return;cL=true;cI=[];cF='all';setDot(true);rLoad('conf');
+  try{
+    const r=await fetch('/api/conferences');
+    if(!r.ok){const b=await r.json().catch(()=>({error:`HTTP ${r.status}`}));throw new Error(b.error)}
+    const d=await r.json();
+    if(!d.items?.length)throw new Error('No conference data found.');
+    cI=d.items;cD=new Date();
+    try{localStorage.setItem('cb3_conf',JSON.stringify({items:cI,ts:Date.now()}))}catch(e){}
+    rConf();
+  }catch(e){rErr('conf',e.message)}
+  finally{cL=false;setDot(false);ub()}
+}
+
+function setDot(o){document.getElementById('dot').classList.toggle('on',o);document.getElementById('sTxt').textContent=o?'FETCHING — INTEL FEED':'SECURE — INTEL FEED'}
+function E(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+function sNF(id){nF=id;rNews()}
+function sCF(id){cF=id;rConf()}
+
+// ═══ RENDERERS ═══
+function rInit(t){
+  const n=t==='news';
+  document.getElementById(n?'ns':'cs').classList.add('hd');
+  document.getElementById(n?'nc':'cc').innerHTML=`<div class="ini an">
+    <div class="ini-i ${n?'nw':'cf'}">${n?'🛰':'🎓'}</div>
+    <p>${n?'Fetch the latest cybersecurity news from 15+ security feeds — completely free, no API key needed.':'Find cybersecurity conferences, student scholarships, volunteering opportunities, and CFPs.'}</p>
+    <button class="go ${n?'nb':'cb'}" onclick="${n?'fN()':'fC()'}">▶ &nbsp;${n?'Fetch News':'Find Opportunities'}</button>
+  </div>`}
+
+function rLoad(t){
+  const n=t==='news';
+  document.getElementById(n?'ns':'cs').classList.add('hd');
+  document.getElementById(n?'nc':'cc').innerHTML=`<div class="an">
+    <div class="ldi"><div class="ldp ${n?'np':'cp'}">${n?'Fetching from 15+ security feeds…':'Searching conferences & opportunities…'}</div>
+    <div class="ldb"><div class="ldf ${n?'nf':'cff'}"></div></div>
+    <div class="ldh">Usually takes 3-8 seconds</div></div>
+    <div class="cds">${[0,1,2,3].map(i=>`<div class="sk" style="animation-delay:${i*0.12}s"><div style="display:flex;gap:8px;margin-bottom:12px"><div class="skb" style="width:60px;height:18px"></div><div class="skb" style="width:70px;height:18px"></div></div><div class="skb" style="width:82%;height:14px;margin-bottom:8px"></div><div class="skb" style="width:100%;height:11px;margin-bottom:6px"></div><div class="skb" style="width:55%;height:11px"></div></div>`).join('')}</div></div>`}
+
+function rErr(t,m){
+  const n=t==='news';
+  document.getElementById(n?'nc':'cc').innerHTML=`<div class="eb an"><div class="em">⚠ ${E(m)}</div><button class="er" onclick="${n?'fN()':'fC()'}">↻ Retry</button></div>`}
+
+function rNews(){
+  document.getElementById('ns').classList.remove('hd');
+  document.getElementById('nT').textContent=nI.length;
+  document.getElementById('nC').textContent=nI.filter(n=>n.priority==='critical').length;
+  document.getElementById('nS').textContent=[...new Set(nI.map(n=>n.source))].length;
+  if(nD){const l=document.getElementById('lv');if(tab==='news'){l.style.display='inline';l.textContent='● Updated '+nD.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}}
+
+  const f=nF==='all'?nI:nI.filter(n=>n.category===nF);
+  const fh=NC.filter(c=>c.id==='all'||nI.some(n=>n.category===c.id)).map(c=>{
+    const cnt=c.id==='all'?nI.length:nI.filter(n=>n.category===c.id).length;
+    return `<button class="fb ${nF===c.id?'on':''}" onclick="sNF('${c.id}')">${c.i} ${c.l}<span class="c">${cnt}</span></button>`
+  }).join('');
+
+  let ch='';
+  if(!f.length)ch='<div class="ey">No items in this category.</div>';
+  else ch='<div class="cds">'+f.map((n,i)=>{
+    const pri=n.priority||'medium',acc=AC[pri]||AC.medium;
+    const lnk=n.url&&n.url!=='N/A'?`<a href="${E(n.url)}" target="_blank" rel="noopener">Read full story →</a>`:'';
+    return `<div class="cd an" style="animation-delay:${i*0.03}s"><div class="br" style="background:${acc}"></div><div class="ct"><span class="bg b-${pri}">${pri.toUpperCase()}</span><span class="tg">${E(n.category)}</span>${n.source?`<span class="sr">${E(n.source)}</span>`:''}</div><h3>${E(n.title)}</h3><p>${E(n.summary)}</p>${lnk}</div>`
+  }).join('')+'</div>';
+
+  document.getElementById('nc').innerHTML=`<div class="fl an">${fh}<button class="rb" onclick="fN()">↻ Refresh</button></div>${ch}`
+}
+
+function rConf(){
+  document.getElementById('cs').classList.remove('hd');
+  document.getElementById('cT').textContent=cI.length;
+  document.getElementById('cS').textContent=cI.filter(n=>n.type==='scholarship').length;
+  document.getElementById('cV').textContent=cI.filter(n=>n.type==='volunteer').length;
+  if(cD){const l=document.getElementById('lv');if(tab==='conf'){l.style.display='inline';l.textContent='● Updated '+cD.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}}
+
+  const f=cF==='all'?cI:cI.filter(n=>n.type===cF);
+  const fh=CC.filter(c=>c.id==='all'||cI.some(n=>n.type===c.id)).map(c=>{
+    const cnt=c.id==='all'?cI.length:cI.filter(n=>n.type===c.id).length;
+    return `<button class="fb ${cF===c.id?'on':''}" onclick="sCF('${c.id}')">${c.i} ${c.l}<span class="c">${cnt}</span></button>`
+  }).join('');
+
+  let ch='';
+  if(!f.length)ch='<div class="ey">No items in this category.</div>';
+  else ch='<div class="cds">'+f.map((n,i)=>{
+    const t=n.type||'conference',u=n.urgency||'upcoming',acc=TC[t]||TC.conference;
+    const lnk=n.url&&n.url!=='N/A'?`<a href="${E(n.url)}" target="_blank" rel="noopener">Learn more →</a>`:'';
+    let chips='';
+    if(n.deadline&&n.deadline!=='N/A'&&n.deadline!=='TBA'){const soon=u==='deadline_soon';chips+=`<span class="ch ${soon?'dl':''}"><span class="ic">⏰</span>${E(n.deadline)}</span>`}
+    if(n.location&&n.location!=='N/A'&&n.location!=='See details')chips+=`<span class="ch"><span class="ic">📍</span>${E(n.location)}</span>`;
+    if(n.cost_for_students&&n.cost_for_students!=='N/A'){const free=n.cost_for_students.toLowerCase().includes('free');chips+=`<span class="ch ${free?'fr':''}">${free?'<span class="ic">✅</span>':'<span class="ic">💰</span>'}${E(n.cost_for_students)}</span>`}
+    return `<div class="cd an" style="animation-delay:${i*0.03}s"><div class="br" style="background:${acc}"></div><div class="ct"><span class="bg b-${t}">${t.replace('_',' ').toUpperCase()}</span><span class="bg u-${u}">${u.replace('_',' ').toUpperCase()}</span>${n.source?`<span class="sr">${E(n.source)}</span>`:''}</div><h3>${E(n.title)}</h3><p>${E(n.summary)}</p>${chips?'<div class="cm">'+chips+'</div>':''}${lnk}</div>`
+  }).join('')+'</div>';
+
+  document.getElementById('cc').innerHTML=`<div class="fl an">${fh}<button class="rb" onclick="fC()">↻ Refresh</button></div>${ch}`
+}
+
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>
