@@ -2,7 +2,7 @@ import Parser from 'rss-parser';
 
 const parser = new Parser({
   timeout: 8000,
-  headers: { 'User-Agent': 'CyberGuard/1.0' },
+  headers: { 'User-Agent': 'ThreatLens/1.0' },
 });
 
 // ═══════════ FREE CYBERSECURITY RSS FEEDS ═══════════
@@ -312,15 +312,31 @@ export default async function handler(req, res) {
       FEEDS.map(async (feed) => {
         try {
           const parsed = await parser.parseURL(feed.url);
-          return (parsed.items || []).slice(0, 8).map(item => ({
-            title: cleanHTML(item.title) || 'Untitled',
-            summary: truncate(cleanHTML(item.contentSnippet || item.content || item.description || '')),
-            url: item.link || 'N/A',
-            source: feed.source,
-            pubDate: item.pubDate || item.isoDate || null,
-            _defaultCat: feed.category,
-            _defaultPri: feed.priority,
-          }));
+          return (parsed.items || []).slice(0, 8).map(item => {
+            let title = cleanHTML(item.title) || 'Untitled';
+            let source = feed.source;
+            let summary = truncate(cleanHTML(item.contentSnippet || item.content || item.description || ''));
+            // Google News titles look like "Headline - Publisher" and the
+            // description just repeats the headline, so show the real publisher
+            // and drop the duplicate text.
+            if (feed.source === 'Google News') {
+              const cut = title.lastIndexOf(' - ');
+              if (cut > 0) {
+                source = title.slice(cut + 3).trim() || feed.source;
+                title = title.slice(0, cut).trim();
+              }
+              summary = '';
+            }
+            return {
+              title,
+              summary,
+              url: item.link || 'N/A',
+              source,
+              pubDate: item.pubDate || item.isoDate || null,
+              _defaultCat: feed.category,
+              _defaultPri: feed.priority,
+            };
+          });
         } catch (e) {
           console.warn(`Feed failed: ${feed.source} — ${e.message}`);
           return [];

@@ -1,4 +1,4 @@
-const CACHE = 'threatlens-v1';
+const CACHE = 'threatlens-v2';
 const SHELL = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -12,27 +12,21 @@ self.addEventListener('activate', e => {
   );
 });
 
+// Network-first for everything, so new deploys and refreshes always show fresh
+// content. The cache is only a fallback for when the device is offline.
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  // API calls: network-first, fall back to cache
-  if (url.pathname.startsWith('/api/')) {
-    e.respondWith(
-      fetch(e.request)
-        .then(r => {
-          const cl = r.clone();
-          caches.open(CACHE).then(c => c.put(e.request, cl));
-          return r;
-        })
-        .catch(() => caches.match(e.request))
-    );
-    return;
-  }
-  // Static: cache-first
+  if (e.request.method !== 'GET' || url.origin !== self.location.origin) return;
+  const key = url.pathname; // ignore ?r= cache-busters so the cache holds one copy per path
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request).then(nr => {
-      const cl = nr.clone();
-      caches.open(CACHE).then(c => c.put(e.request, cl));
-      return nr;
-    }))
+    fetch(e.request)
+      .then(r => {
+        if (r.ok) {
+          const copy = r.clone();
+          caches.open(CACHE).then(c => c.put(key, copy));
+        }
+        return r;
+      })
+      .catch(() => caches.match(key))
   );
 });
