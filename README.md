@@ -16,10 +16,11 @@ Everything runs on RSS feeds with a keyword-based threat classification system. 
 - 24 feeds scanned in real time, including mainstream outlets via Google News
 - 12 threat type categories with pre-written explanations
 - Expandable insight panels on every news card
+- CVE stories in their own column (a separate tab on phones)
 - Sources tab listing every outlet in the feed, tap one to filter
 - Refresh button to pull the latest stories on demand
 - Installable PWA (iPhone, Android, Windows)
-- Editorial design with light and dark modes
+- Dark app-style design with pastel story cards, search, and saved stories
 - Works offline via service worker caching
 
 ## Deploy to Vercel

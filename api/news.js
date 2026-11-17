@@ -12,7 +12,7 @@ const FEEDS = [
   { url: 'https://krebsonsecurity.com/feed/', source: 'Krebs on Security', category: 'breaches', priority: 'high' },
   { url: 'https://www.darkreading.com/rss.xml', source: 'Dark Reading', category: 'threats', priority: 'medium' },
   { url: 'https://threatpost.com/feed/', source: 'Threatpost', category: 'threats', priority: 'medium' },
-  { url: 'https://cvefeed.io/rssfeed/latest.xml', source: 'CVE Feed', category: 'vulnerabilities', priority: 'high' },
+  { url: 'https://cvefeed.io/rssfeed/latest.xml', source: 'CVE Feed', category: 'vulnerabilities', priority: 'high', limit: 20 },
   { url: 'https://www.cisa.gov/news.xml', source: 'CISA', category: 'vulnerabilities', priority: 'critical' },
   { url: 'https://cloudsecurityalliance.org/blog/feed', source: 'Cloud Security Alliance', category: 'cloud', priority: 'medium' },
   { url: 'https://www.schneier.com/feed/atom/', source: 'Schneier on Security', category: 'policy', priority: 'medium' },
@@ -312,7 +312,7 @@ export default async function handler(req, res) {
       FEEDS.map(async (feed) => {
         try {
           const parsed = await parser.parseURL(feed.url);
-          return (parsed.items || []).slice(0, 8).map(item => {
+          return (parsed.items || []).slice(0, feed.limit || 8).map(item => {
             let title = cleanHTML(item.title) || 'Untitled';
             let source = feed.source;
             let summary = truncate(cleanHTML(item.contentSnippet || item.content || item.description || ''));
@@ -357,7 +357,11 @@ export default async function handler(req, res) {
     // Categorize, prioritize, and detect threat type
     allItems = allItems.map(item => {
       const threat = detectThreatType(item.title, item.summary);
+      const cveMatch = item.title.match(/CVE-\d{4}-\d{4,}/i);
       return {
+        // CVE stories get their own column in the app
+        is_cve: item.source === 'CVE Feed' || !!cveMatch,
+        cve_id: cveMatch ? cveMatch[0].toUpperCase() : null,
         title: item.title,
         summary: item.summary,
         url: item.url,
@@ -392,7 +396,11 @@ export default async function handler(req, res) {
       return true;
     });
 
-    allItems = allItems.slice(0, 60);
+    // Cap news and CVEs separately so one can't crowd out the other
+    allItems = [
+      ...allItems.filter(i => !i.is_cve).slice(0, 60),
+      ...allItems.filter(i => i.is_cve).slice(0, 20),
+    ];
 
     return res.status(200).json({
       items: allItems,

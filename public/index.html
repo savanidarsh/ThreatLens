@@ -4,151 +4,220 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ThreatLens">
-  <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#121110" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#0c0c0d">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icon-192.png">
   <title>ThreatLens</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#f6f3ec;--card:#fffdf8;--text:#1c1a17;--muted:#6d675d;--faint:#a39c8f;--line:#e2dccf;--rule:#1c1a17;
-      --accent:#b8442a;--tint:rgba(184,68,42,.07);--crit:#b3261e;--high:#9a5b00;
-      --serif:"Newsreader",Georgia,"Times New Roman",serif;
-      --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --bg:#0c0c0d;--panel:#18181a;--panel2:#222225;--line:#2c2c30;--text:#f5f5f2;--muted:#8d8d93;--ink:#141414;
+      --yellow:#f5f230;--red:#ff3b30;--orange:#ff9545;
+      --c0:#fdf0c0;--c1:#fbd8d2;--c2:#d5e6fb;--c3:#e3dbfa;--c4:#d6f1dd;
+      --font:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     }
-    @media(prefers-color-scheme:dark){:root{
-      --bg:#121110;--card:#1a1917;--text:#ece7dc;--muted:#a09a8d;--faint:#6b665c;--line:#2b2926;--rule:#ece7dc;
-      --accent:#ee8a6c;--tint:rgba(238,138,108,.09);--crit:#ff7b72;--high:#e9b25a;
-    }}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{-webkit-text-size-adjust:100%}
-    body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;
-      padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
-    button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
-    .wrap{max-width:660px;margin:0 auto;padding:24px 20px 72px}
-    @media(min-width:640px){.wrap{padding-top:48px}}
-    .caps{font-size:11px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase}
+    html{-webkit-text-size-adjust:100%;background:var(--bg)}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;
+      padding:env(safe-area-inset-top,0) 0 calc(112px + env(safe-area-inset-bottom,0))}
+    button,input{font:inherit;color:inherit;background:none;border:none}
+    button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+    svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .wrap{max-width:560px;margin:0 auto;padding:20px 16px 0}
 
-    /* Masthead */
-    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted)}
-    .refresh{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;
-      font-size:12.5px;color:var(--text);background:var(--card);transition:border-color .15s}
-    .refresh:hover{border-color:var(--faint)}
-    .refresh:disabled{color:var(--faint);cursor:default}
-    .refresh svg{width:13px;height:13px}
-    .refresh.spin svg{animation:spin .9s linear infinite}
+    /* Header */
+    header{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+    .logo{width:36px;height:36px;border-radius:50%;background:var(--text);color:var(--ink);display:grid;place-items:center}
+    .logo svg{width:19px;height:19px;stroke-width:2.3}
+    h1{font-size:23px;font-weight:600;letter-spacing:-.3px;flex:1}
+    .round{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;transition:background .15s}
+    .round:hover{background:var(--panel)}
+    .round:disabled{color:var(--muted);cursor:default}
+    .round.spin svg{animation:spin .9s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
-    h1{font-family:var(--serif);font-weight:500;font-size:clamp(44px,13vw,68px);line-height:1;letter-spacing:-1.5px;margin:18px 0 6px}
-    h1 em{font-style:italic;color:var(--accent)}
-    .tag{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--muted)}
-    .rule{border:0;border-top:2px solid var(--rule);margin-top:20px;position:relative}
-    .rule::after{content:'';position:absolute;left:0;right:0;top:3px;border-top:1px solid var(--rule)}
 
-    nav{display:flex;gap:22px;border-bottom:1px solid var(--line);margin-top:6px}
-    .tab{padding:14px 0 12px;color:var(--faint);border-bottom:2px solid transparent;margin-bottom:-1px}
-    .tab.on{color:var(--text);border-bottom-color:var(--accent)}
-    .tab span{font-weight:500;letter-spacing:.3px;margin-left:5px;color:var(--faint)}
+    /* Tools: search + category tabs */
+    .search{display:flex;align-items:center;gap:10px;background:var(--panel);border-radius:999px;padding:0 6px 0 18px;height:48px;margin-bottom:18px}
+    .search input{flex:1;min-width:0;outline:none;font-size:15px}
+    .search input::placeholder{color:var(--muted)}
+    .search span{width:36px;height:36px;border-radius:50%;background:var(--panel2);display:grid;place-items:center;color:var(--muted)}
+    .search svg{width:17px;height:17px}
+    .cats{display:flex;align-items:baseline;gap:22px;overflow-x:auto;scrollbar-width:none;margin:0 -16px 14px;padding:0 16px}
+    .cats::-webkit-scrollbar{display:none}
+    .cat{flex-shrink:0;font-size:15px;font-weight:300;color:var(--muted);white-space:nowrap;padding:4px 0;transition:color .15s}
+    .cat.on{font-size:21px;font-weight:500;color:var(--text)}
+    .srcpill{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;background:var(--yellow);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500}
+    .vtitle{font-size:26px;font-weight:600;letter-spacing:-.4px;margin-bottom:6px}
+    .status{font-size:13px;font-weight:300;color:var(--muted);margin-bottom:14px;min-height:20px}
+    .status .err{color:var(--red)}
 
-    .status{font-size:12.5px;color:var(--muted);margin:16px 0 12px;min-height:19px}
-    .status .err{color:var(--crit)}
-    .filters{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px 4px}
-    .filters::-webkit-scrollbar{display:none}
-    .chip{flex-shrink:0;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
-    .chip.on{background:var(--text);border-color:var(--text);color:var(--bg)}
-    .chip.src{background:var(--tint);border-color:transparent;color:var(--accent)}
+    /* Story cards */
+    .cards{display:grid;gap:14px}
+    .card{border-radius:28px;padding:22px 20px 16px;color:var(--ink);background:var(--c0);animation:rise .4s ease-out both}
+    .c1{background:var(--c1)}.c2{background:var(--c2)}.c3{background:var(--c3)}.c4{background:var(--c4)}
+    @keyframes rise{from{opacity:0;transform:translateY(14px)}}
+    .badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .b{font-size:10.5px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;padding:4px 9px;border-radius:7px;background:rgba(0,0,0,.08)}
+    .b.crit{background:var(--red);color:#fff}
+    .b.high{background:var(--ink);color:#fff}
+    .card h2{font-size:22px;font-weight:600;line-height:1.28;letter-spacing:-.3px}
+    .upd{font-size:12px;font-weight:300;opacity:.65;margin-top:8px}
+    .pub{display:flex;align-items:center;gap:10px;margin-top:14px}
+    .av{width:36px;height:36px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:15px;font-weight:600;flex-shrink:0}
+    .pub div{flex:1;min-width:0;line-height:1.25}
+    .pub small{display:block;font-size:11px;font-weight:300;opacity:.65}
+    .pub b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .read{flex-shrink:0;background:var(--ink);color:#fff;border-radius:999px;padding:8px 15px;font-size:13px;font-weight:500;text-decoration:none}
+    .read:hover{background:#000}
+    .sum{font-size:14.5px;line-height:1.55;margin-top:14px;opacity:.85}
 
-    /* Stories */
-    .item{padding:24px 0;border-bottom:1px solid var(--line)}
-    .kick{display:flex;flex-wrap:wrap;gap:4px 10px;color:var(--muted);margin-bottom:8px}
-    .kick .crit{color:var(--crit)}
-    .kick .high{color:var(--high)}
-    .item h2{font-family:var(--serif);font-weight:500;font-size:21px;line-height:1.28;letter-spacing:-.2px}
-    .item.lead h2{font-size:clamp(26px,7vw,32px);line-height:1.18;letter-spacing:-.5px}
-    .item h2 a{color:inherit;text-decoration:none;background:linear-gradient(var(--accent),var(--accent)) 0 100%/0 1px no-repeat;transition:background-size .25s}
-    .item h2 a:hover{background-size:100% 1px}
-    .sum{font-size:14.5px;color:var(--muted);margin-top:8px}
-    .by{font-size:12.5px;color:var(--faint);margin-top:10px}
-    .by b{font-weight:600;color:var(--muted)}
-
-    .more{display:flex;flex-direction:column;gap:6px;margin-top:14px}
-    details{border:1px solid var(--line);border-radius:10px;background:var(--card);overflow:hidden}
-    summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;
-      font-size:13.5px;font-weight:500;-webkit-tap-highlight-color:transparent}
+    .more{display:grid;gap:6px;margin-top:16px}
+    details{background:rgba(0,0,0,.06);border-radius:18px}
+    summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 12px 16px;
+      font-size:14px;font-weight:500;-webkit-tap-highlight-color:transparent}
     summary::-webkit-details-marker{display:none}
-    summary::after{content:'+';font-size:17px;line-height:1;color:var(--accent);font-weight:400}
+    summary::after{content:'+';width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.08);display:grid;place-items:center;font-size:17px;font-weight:400;flex-shrink:0}
     details[open] summary::after{content:'–'}
-    .body{padding:2px 14px 14px;font-size:14px;color:var(--muted)}
+    .body{padding:0 16px 16px;font-size:14px;line-height:1.55;opacity:.9}
     .body ul{list-style:none}
-    .body li{position:relative;padding-left:16px;margin:7px 0}
-    .body li::before{content:'';position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+    .body li{position:relative;padding-left:16px;margin:8px 0}
+    .body li::before{content:'';position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:currentColor}
+
+    .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+    .act{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.08);display:grid;place-items:center;transition:background .15s}
+    .act:hover{background:rgba(0,0,0,.14)}
+    .act svg{width:17px;height:17px}
+    .act.on{background:var(--ink);color:#fff}
+    .act.on svg{fill:currentColor}
+
+    /* CVE cards (dark, yellow accent) */
+    .cves{display:grid;gap:10px}
+    .cve{background:var(--panel);border-radius:24px;padding:18px}
+    .cve .ids{display:flex;flex-wrap:wrap;gap:6px}
+    .cve .id{font-family:var(--mono);font-size:11.5px;font-weight:700;background:var(--yellow);color:var(--ink);padding:4px 9px;border-radius:7px}
+    .cve .b{background:var(--panel2);color:var(--text)}
+    .cve .b.crit{background:var(--red);color:#fff}
+    .cve h3{font-size:16.5px;font-weight:500;line-height:1.35;margin-top:11px;overflow-wrap:anywhere}
+    .cve h3 a{color:inherit;text-decoration:none}
+    .cve h3 a:hover{color:var(--yellow)}
+    .cve .sum{font-size:13.5px;font-weight:300;color:var(--muted);opacity:1;margin-top:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .cve .by{font-size:12px;font-weight:300;color:var(--muted);margin-top:9px}
+    .cve details{background:var(--panel2);margin-top:12px;border-radius:16px}
+    .cve summary{font-size:13.5px;padding:10px 12px 10px 14px}
+    .cve summary::after{background:var(--yellow);color:var(--ink)}
+    .cve .body{padding:0 14px 14px;font-size:13.5px;font-weight:300}
+    .cve .body li::before{background:var(--yellow)}
 
     /* Sources */
-    .sec{color:var(--muted);margin:26px 0 6px}
-    .note{font-size:13.5px;color:var(--muted);margin-top:4px}
-    .row{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
-    .row .n{font-family:var(--serif);font-size:17px}
-    .row .dots{flex:1;border-bottom:1px dotted var(--faint);transform:translateY(-4px);opacity:.6}
-    .row .c{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-    button.row:hover .n{color:var(--accent)}
-    .quiet{font-size:13.5px;color:var(--muted);line-height:1.9}
-    .quiet a{color:inherit;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
-    .quiet a:hover{color:var(--accent)}
+    .hint{font-size:14px;font-weight:300;color:var(--muted);margin-bottom:14px}
+    .rows{display:grid;gap:8px}
+    .row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--panel);border-radius:20px;padding:12px 14px;transition:background .15s}
+    .row:hover{background:var(--panel2)}
+    .row .av{background:var(--c0);color:var(--ink)}
+    .row .n{flex:1;min-width:0;font-size:15.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .row .c{font-size:12.5px;background:var(--panel2);border-radius:999px;padding:4px 10px;color:var(--muted)}
+    .sub{font-size:13px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:26px 0 10px}
+    .tags{display:flex;flex-wrap:wrap;gap:6px}
+    .tags a{font-size:13px;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+    .tags a:hover{color:var(--text);border-color:var(--muted)}
 
-    .empty{padding:56px 0;text-align:center;font-family:var(--serif);font-style:italic;font-size:17px;color:var(--muted)}
-    .skel{padding:24px 0;border-bottom:1px solid var(--line)}
-    .skel i{display:block;height:11px;border-radius:3px;background:var(--line);margin-bottom:11px;animation:fade 1.4s ease-in-out infinite}
-    @keyframes fade{50%{opacity:.4}}
-    footer{margin-top:40px;text-align:center;color:var(--faint)}
-    :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .empty{padding:56px 20px;text-align:center;font-size:15px;font-weight:300;color:var(--muted);background:var(--panel);border-radius:28px}
+    .skel{height:200px;border-radius:28px;background:var(--panel);animation:fade 1.4s ease-in-out infinite}
+    @keyframes fade{50%{opacity:.5}}
+
+    /* Floating dock */
+    .dock{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0));transform:translateX(-50%);z-index:10;display:flex;gap:6px;
+      padding:7px;border-radius:999px;background:rgba(34,34,37,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 10px 34px rgba(0,0,0,.55)}
+    .dk{height:48px;min-width:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:7px;padding:0 14px;color:var(--muted);
+      font-size:14px;font-weight:500;transition:background .2s,color .2s}
+    .dk i{display:none;font-style:normal}
+    .dk.on{background:var(--text);color:var(--ink)}
+    .dk.on i{display:inline}
+    .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0));transform:translateX(-50%);z-index:11;background:var(--yellow);color:var(--ink);
+      font-size:13.5px;font-weight:500;padding:9px 16px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .2s}
+    .toast.show{opacity:1}
+
+    /* Wide screens: CVE column beside the news */
+    .side{display:none}
+    @media(min-width:980px){
+      .wrap{max-width:1180px;padding:32px 28px 0}
+      .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
+      .side{display:block}
+      .side .vtitle{font-size:21px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+      .side .vtitle span{font-size:13px;font-weight:500;background:var(--yellow);color:var(--ink);border-radius:999px;padding:3px 11px}
+      #dk-cves{display:none}
+      .cards{grid-template-columns:1fr 1fr;align-items:start}
+      .search{max-width:420px}
+    }
+    :focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
     @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="top">
-    <div class="caps" id="date"></div>
-    <button class="refresh" id="refresh" onclick="load(true)" aria-label="Refresh news">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
-      <span>Refresh</span>
+  <header>
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.800-1.200-8-4.500-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+    <h1>ThreatLens</h1>
+    <button class="round" id="refresh" onclick="load(true)" aria-label="Refresh news" title="Refresh">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.640-6.360"/><path d="M21 3v6h-6"/></svg>
     </button>
+  </header>
+
+  <div class="grid">
+    <div>
+      <div id="tools">
+        <label class="search">
+          <input id="q" type="search" placeholder="Search news" autocomplete="off" oninput="S.q=this.value;renderMain()" aria-label="Search news">
+          <span><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.500-3.500"/></svg></span>
+        </label>
+        <div class="cats" id="cats"></div>
+      </div>
+      <h2 class="vtitle" id="vtitle" hidden></h2>
+      <div class="status" id="status"></div>
+      <main id="list"></main>
+    </div>
+    <aside class="side" id="side" aria-label="CVE watch"></aside>
   </div>
-  <h1>Threat<em>Lens</em></h1>
-  <p class="tag">Security news, explained simply.</p>
-  <hr class="rule">
-
-  <nav>
-    <button class="tab caps on" id="tab-latest" onclick="go('latest')">Latest</button>
-    <button class="tab caps" id="tab-sources" onclick="go('sources')">Sources<span id="srcCount"></span></button>
-  </nav>
-
-  <div class="status" id="status"></div>
-  <div class="filters" id="filters"></div>
-  <main id="list"></main>
-
-  <footer class="caps">ThreatLens</footer>
 </div>
 
-<script>
-const KEY='tl2_news',TTL=30;
-const CATS=[['all','All'],['threats','Threats'],['vulnerabilities','Vulnerabilities'],['breaches','Breaches'],['cloud','Cloud'],['ai','AI'],['policy','Policy']];
-const S={view:'latest',items:[],feeds:[],cat:'all',src:null,loading:false,at:null,err:null};
-const $=id=>document.getElementById(id);
+<nav class="dock" aria-label="Sections">
+  <button class="dk on" id="dk-news" onclick="go('news')" aria-label="News"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg><i>News</i></button>
+  <button class="dk" id="dk-cves" onclick="go('cves')" aria-label="CVEs"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.500-3.200 7.800-8 9-4.800-1.200-8-4.500-8-9V6z"/><path d="M12 8v5"/><path d="M12 16.500v.010"/></svg><i>CVEs</i></button>
+  <button class="dk" id="dk-sources" onclick="go('sources')" aria-label="Sources"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><i>Sources</i></button>
+  <button class="dk" id="dk-saved" onclick="go('saved')" aria-label="Saved"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.500L6 21z"/></svg><i>Saved</i></button>
+</nav>
+<div class="toast" id="toast" role="status"></div>
 
-$('date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+<script>
+const KEY='tl3_news',SAVE_KEY='tl_saved',TTL=30;
+const CATS=[['all','Trending'],['threats','Threats'],['vulnerabilities','Vulnerabilities'],['breaches','Breaches'],['cloud','Cloud'],['ai','AI'],['policy','Policy']];
+const TITLES={cves:'CVE Watch',sources:'Sources',saved:'Saved News'};
+const ICON={
+  share:'<svg viewBox="0 0 24 24"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 13v6h14v-6"/></svg>',
+  save:'<svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4.500L6 21z"/></svg>'
+};
+const S={view:'news',items:[],feeds:[],saved:[],cat:'all',src:null,q:'',loading:false,at:null,err:null};
+let R=[]; // stories currently on screen, so buttons can refer to them by index
+const $=id=>document.getElementById(id);
+const wide=matchMedia('(min-width:980px)');
+wide.addEventListener('change',render);
+const news=()=>S.items.filter(i=>!i.is_cve);
+const cves=()=>S.items.filter(i=>i.is_cve);
 
 // Show the saved copy instantly, then fetch fresh if it is older than 30 minutes
 try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.items&&d.items.length){S.items=d.items;S.feeds=d.feeds||[];S.at=d.ts}}catch(e){}
+try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(Array.isArray(d))S.saved=d}catch(e){}
 render();
 if(!S.at||Date.now()-S.at>TTL*60000)load(false);
 
 function go(v){S.view=v;render();scrollTo(0,0)}
 function setCat(c){S.cat=c;render()}
-function setSrc(i){S.src=i==null?null:counts()[i][0];S.cat='all';S.view='latest';render();scrollTo(0,0)}
+function setSrc(i){S.src=i==null?null:counts()[i][0];S.cat='all';S.q='';$('q').value='';S.view='news';render();scrollTo(0,0)}
 
 async function load(force){
   if(S.loading)return;
@@ -161,9 +230,28 @@ async function load(force){
     S.items=d.items;S.feeds=d.feeds||[];S.at=Date.now();
     if(S.src&&!S.items.some(i=>i.source===S.src))S.src=null;
     try{localStorage.setItem(KEY,JSON.stringify({items:S.items,feeds:S.feeds,ts:S.at}))}catch(e){}
+    if(force)toast('Updated');
   }catch(e){S.err=e.message||'Could not load.'}
   finally{S.loading=false;render()}
 }
+
+function isSaved(n){return S.saved.some(s=>s.url===n.url&&s.title===n.title)}
+function toggleSave(i){
+  const n=R[i];if(!n)return;
+  if(isSaved(n)){S.saved=S.saved.filter(s=>!(s.url===n.url&&s.title===n.title));toast('Removed from saved')}
+  else{S.saved=[n,...S.saved].slice(0,100);toast('Saved')}
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(S.saved))}catch(e){}
+  renderMain();
+}
+async function share(i){
+  const n=R[i];if(!n||!/^https?:\/\//i.test(n.url||''))return;
+  try{
+    if(navigator.share)await navigator.share({title:n.title,url:n.url});
+    else{await navigator.clipboard.writeText(n.url);toast('Link copied')}
+  }catch(e){}
+}
+let toastTimer;
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1600)}
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
 function link(u){return /^https?:\/\//i.test(u||'')?esc(u):''}
@@ -173,6 +261,7 @@ function ago(d){
   if(m<60)return m<1?'just now':m+'m ago';
   const h=Math.round(m/60);return h<24?h+'h ago':Math.round(h/24)+'d ago';
 }
+function initial(s){const m=String(s||'').match(/[A-Za-z0-9]/);return m?m[0].toUpperCase():'•'}
 // [source name, story count], most stories first
 function counts(){
   const m=new Map();
@@ -181,65 +270,103 @@ function counts(){
 }
 
 function render(){
-  const latest=S.view==='latest',cs=counts();
-  $('tab-latest').classList.toggle('on',latest);
-  $('tab-sources').classList.toggle('on',!latest);
-  $('srcCount').textContent=cs.length||'';
-  const btn=$('refresh');
-  btn.disabled=S.loading;btn.classList.toggle('spin',S.loading);
-  btn.lastElementChild.textContent=S.loading?'Refreshing':'Refresh';
+  if(wide.matches&&S.view==='cves')S.view='news'; // CVEs already sit in the side column
+  for(const v of ['news','cves','sources','saved'])$('dk-'+v).classList.toggle('on',S.view===v);
+  const btn=$('refresh');btn.disabled=S.loading;btn.classList.toggle('spin',S.loading);
+
+  const cv=cves();
+  $('side').innerHTML=S.items.length
+    ?`<h2 class="vtitle">CVE Watch<span>${cv.length}</span></h2>${cveList(cv)}`
+    :'';
+  renderMain();
+}
+
+function renderMain(){
+  const v=S.view,cs=counts(),cv=cves();
+  $('tools').hidden=v!=='news';
+  $('vtitle').hidden=v==='news';
+  $('vtitle').textContent=TITLES[v]||'';
 
   let st='';
   if(S.loading&&!S.items.length)st='Loading the latest stories…';
-  else if(S.items.length)st=S.items.length+' stories from '+cs.length+' sources · updated '+new Date(S.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+  else if(S.items.length)st=news().length+' stories · '+cv.length+' CVEs · '+cs.length+' sources · updated '+new Date(S.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
   if(S.err)st=(st?st+' · ':'')+'<span class="err">'+esc(S.err)+'</span>';
   $('status').innerHTML=st;
 
-  if(!S.items.length){
-    $('filters').innerHTML='';
-    $('list').innerHTML=S.loading
-      ?[70,55,80,60].map(w=>`<div class="skel"><i style="width:28%"></i><i style="width:${w}%;height:16px"></i><i style="width:92%"></i></div>`).join('')
-      :`<div class="empty">${S.err?'Couldn’t load right now. Tap Refresh to try again.':'Nothing here yet.'}</div>`;
+  R=[];
+  if(v==='saved'){
+    $('list').innerHTML=S.saved.length?`<div class="cards">${S.saved.map(story).join('')}</div>`
+      :'<div class="empty">Nothing saved yet. Tap the bookmark on a story to keep it here.</div>';
     return;
   }
-  if(latest)renderLatest();else renderSources(cs);
+  if(!S.items.length){
+    $('cats').innerHTML='';
+    $('list').innerHTML=S.loading?'<div class="cards"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>'
+      :`<div class="empty">${S.err?'Couldn’t load right now. Tap refresh to try again.':'Nothing here yet.'}</div>`;
+    return;
+  }
+  if(v==='cves')$('list').innerHTML=cveList(cv);
+  else if(v==='sources')renderSources(cs);
+  else renderNews();
 }
 
-function renderLatest(){
-  const pool=S.src?S.items.filter(i=>i.source===S.src):S.items;
-  const srcChip=S.src?`<button class="chip src" onclick="setSrc(null)" aria-label="Clear source filter">${esc(S.src)} ✕</button>`:'';
-  $('filters').innerHTML=srcChip+CATS.filter(([id])=>id==='all'||pool.some(i=>i.category===id))
-    .map(([id,name])=>`<button class="chip ${S.cat===id?'on':''}" onclick="setCat('${id}')">${name}</button>`).join('');
-  const rows=S.cat==='all'?pool:pool.filter(i=>i.category===S.cat);
-  $('list').innerHTML=rows.length?rows.map(story).join(''):'<div class="empty">No stories match this filter.</div>';
+function renderNews(){
+  const pool=S.src?S.items.filter(i=>i.source===S.src):news();
+  const srcPill=S.src?`<button class="srcpill" onclick="setSrc(null)" aria-label="Clear source filter">${esc(S.src)} ✕</button>`:'';
+  $('cats').innerHTML=srcPill+CATS.filter(([id])=>id==='all'||pool.some(i=>i.category===id))
+    .map(([id,name])=>`<button class="cat ${S.cat===id?'on':''}" onclick="setCat('${id}')">${name}</button>`).join('');
+  let rows=S.cat==='all'?pool:pool.filter(i=>i.category===S.cat);
+  const q=S.q.trim().toLowerCase();
+  if(q)rows=rows.filter(i=>(i.title+' '+(i.summary||'')+' '+(i.source||'')).toLowerCase().includes(q));
+  $('list').innerHTML=rows.length?`<div class="cards">${rows.map(story).join('')}</div>`:'<div class="empty">No stories match.</div>';
 }
 
-function story(n,i){
-  const u=link(n.url),pri=n.priority;
-  const kick=(pri==='critical'||pri==='high'?`<span class="${pri==='critical'?'crit':'high'}">${pri}</span>`:'')+(n.threat_label?`<span>${esc(n.threat_label)}</span>`:'');
+function story(n){
+  const i=R.push(n)-1,u=link(n.url),pri=n.priority;
+  const badges=(pri==='critical'?'<span class="b crit">Critical</span>':pri==='high'?'<span class="b high">High</span>':'')+(n.threat_label?`<span class="b">${esc(n.threat_label)}</span>`:'');
   const when=n.pubDate?ago(n.pubDate):'';
   const explain=n.explanation?`<details><summary>What this means</summary><div class="body">${esc(n.explanation)}</div></details>`:'';
   const protect=n.prevention&&n.prevention.length?`<details><summary>How to protect yourself</summary><div class="body"><ul>${n.prevention.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div></details>`:'';
-  return `<article class="item${i===0?' lead':''}">
-    <div class="kick caps">${kick}</div>
-    <h2>${u?`<a href="${u}" target="_blank" rel="noopener">${esc(n.title)}</a>`:esc(n.title)}</h2>
+  const saved=isSaved(n);
+  return `<article class="card c${i%5}" style="animation-delay:${Math.min(i,8)*40}ms">
+    <div class="badges">${badges}</div>
+    <h2>${esc(n.title)}</h2>
+    ${when?`<div class="upd">Updated ${when}</div>`:''}
+    <div class="pub"><span class="av">${initial(n.source)}</span><div><small>Published by</small><b>${esc(n.source||'Unknown source')}</b></div>${u?`<a class="read" href="${u}" target="_blank" rel="noopener">Read ↗</a>`:''}</div>
     ${n.summary?`<p class="sum">${esc(n.summary)}</p>`:''}
-    <div class="by"><b>${esc(n.source||'Unknown source')}</b>${when?' · '+when:''}</div>
     <div class="more">${explain}${protect}</div>
+    <div class="acts">${u?`<button class="act" onclick="share(${i})" aria-label="Share story">${ICON.share}</button>`:''}<button class="act ${saved?'on':''}" onclick="toggleSave(${i})" aria-label="${saved?'Remove from saved':'Save story'}" aria-pressed="${saved}">${ICON.save}</button></div>
+  </article>`;
+}
+
+function cveList(cv){return cv.length?`<div class="cves">${cv.map(cveItem).join('')}</div>`:'<div class="empty">No new CVEs right now.</div>'}
+
+function cveItem(n){
+  const u=link(n.url),id=n.cve_id||'';
+  // Feed titles often start with the CVE number, which is already shown above the headline
+  const rest=id?n.title.replace(new RegExp('^\\s*'+id+'\\s*[-:–—|]*\\s*','i'),''):n.title;
+  const title=rest||n.summary||n.title;
+  const sum=rest&&n.summary&&n.summary!==title?`<p class="sum">${esc(n.summary)}</p>`:'';
+  const when=n.pubDate?ago(n.pubDate):'';
+  const tips=n.prevention&&n.prevention.length?`<ul style="margin-top:8px">${n.prevention.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:'';
+  const help=n.explanation?`<details><summary>Explain and protect</summary><div class="body">${esc(n.explanation)}${tips}</div></details>`:'';
+  return `<article class="cve">
+    <div class="ids">${id?`<span class="id">${esc(id)}</span>`:''}${n.priority==='critical'?'<span class="b crit">Critical</span>':''}</div>
+    <h3>${u?`<a href="${u}" target="_blank" rel="noopener">${esc(title)}</a>`:esc(title)}</h3>
+    ${sum}
+    <div class="by">${esc(n.source||'Unknown source')}${when?' · '+when:''}</div>
+    ${help}
   </article>`;
 }
 
 function renderSources(cs){
-  $('filters').innerHTML='';
   const active=new Set(cs.map(c=>c[0]));
   const quiet=S.feeds.filter(f=>!active.has(f.name)&&f.name!=='Google News');
-  const rows=cs.map(([name,c],i)=>`<button class="row" onclick="setSrc(${i})"><span class="n">${esc(name)}</span><span class="dots"></span><span class="c">${c} ${c===1?'story':'stories'}</span></button>`).join('');
-  const quietHtml=quiet.length?`<div class="sec caps">Also monitored</div>
-    <p class="note">Checked on every refresh, but none of their stories are in the feed right now.</p>
-    <p class="quiet" style="margin-top:8px">${quiet.map(f=>{const u=link(f.site);return u?`<a href="${u}" target="_blank" rel="noopener">${esc(f.name)}</a>`:esc(f.name)}).join(' · ')}</p>`:'';
-  $('list').innerHTML=`<div class="sec caps" style="margin-top:8px">In today’s feed</div>
-    <p class="note">Tap a source to see only its stories. Mainstream outlets are found through Google News.</p>
-    <div style="margin-top:6px">${rows}</div>${quietHtml}`;
+  const rows=cs.map(([name,c],i)=>`<button class="row" onclick="setSrc(${i})"><span class="av" style="background:var(--c${i%5})">${initial(name)}</span><span class="n">${esc(name)}</span><span class="c">${c} ${c===1?'story':'stories'}</span></button>`).join('');
+  const quietHtml=quiet.length?`<div class="sub">Also monitored</div>
+    <p class="hint">Checked on every refresh, but none of their stories are in the feed right now.</p>
+    <div class="tags">${quiet.map(f=>`<a href="${link(f.site)||'#'}" target="_blank" rel="noopener">${esc(f.name)}</a>`).join('')}</div>`:'';
+  $('list').innerHTML=`<p class="hint">Tap a source to see only its stories. Mainstream outlets are found through Google News.</p><div class="rows">${rows}</div>${quietHtml}`;
 }
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
