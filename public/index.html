@@ -257,7 +257,7 @@ function rInit(t){
   document.getElementById(n?'ns':'cs').classList.add('hd');
   document.getElementById(n?'nc':'cc').innerHTML=`<div class="ini an">
     <div class="ini-i ${n?'nw':'cf'}">${n?'⛨':'🎓'}</div>
-    <p>${n?'Scan 15+ threat feeds for the latest cybersecurity news — with plain-English explanations and protection tips for every story.':'Find cybersecurity conferences, student scholarships, volunteering opportunities, and CFPs.'}</p>
+    <p>${n?'Scan 24+ threat feeds for the latest cybersecurity news — with plain-English explanations and protection tips for every story.':'Find cybersecurity conferences, student scholarships, volunteering opportunities, and CFPs.'}</p>
     <button class="go ${n?'nb':'cb'}" onclick="${n?'fN()':'fC()'}">▶ &nbsp;${n?'Scan Threats':'Find Opportunities'}</button>
   </div>`}
 
@@ -265,7 +265,7 @@ function rLoad(t){
   const n=t==='news';
   document.getElementById(n?'ns':'cs').classList.add('hd');
   document.getElementById(n?'nc':'cc').innerHTML=`<div class="an">
-    <div class="ldi"><div class="ldp ${n?'np':'cp'}">${n?'Scanning 15+ security feeds…':'Searching conferences & opportunities…'}</div>
+    <div class="ldi"><div class="ldp ${n?'np':'cp'}">${n?'Scanning 24+ security feeds…':'Searching conferences & opportunities…'}</div>
     <div class="ldb"><div class="ldf ${n?'nf':'cff'}"></div></div>
     <div class="ldh">Usually takes 3-8 seconds</div></div>
     <div class="cds">${[0,1,2,3].map(i=>`<div class="sk" style="animation-delay:${i*0.12}s"><div style="display:flex;gap:8px;margin-bottom:12px"><div class="skb" style="width:60px;height:18px"></div><div class="skb" style="width:70px;height:18px"></div></div><div class="skb" style="width:82%;height:14px;margin-bottom:8px"></div><div class="skb" style="width:100%;height:11px;margin-bottom:6px"></div><div class="skb" style="width:55%;height:11px"></div></div>`).join('')}</div></div>`}

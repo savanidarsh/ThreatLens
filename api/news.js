@@ -23,6 +23,16 @@ const FEEDS = [
   { url: 'https://blog.talosintelligence.com/feeds/posts/default?alt=rss', source: 'Cisco Talos', category: 'threats', priority: 'high' },
   { url: 'https://securelist.com/feed/', source: 'Securelist (Kaspersky)', category: 'threats', priority: 'high' },
   { url: 'https://www.recordedfuture.com/feed', source: 'Recorded Future', category: 'threats', priority: 'medium' },
+  // Google News aggregated — pulls mainstream outlets (Yahoo, Fox, CNN, BBC, etc.)
+  { url: 'https://news.google.com/rss/search?q=cybersecurity+attack+OR+hack+OR+breach&hl=en-US&gl=US&ceid=US:en', source: 'Google News', category: 'threats', priority: 'medium' },
+  { url: 'https://news.google.com/rss/search?q=cybersecurity+AI+threat+OR+deepfake&hl=en-US&gl=US&ceid=US:en', source: 'Google News', category: 'ai', priority: 'medium' },
+  { url: 'https://news.google.com/rss/search?q=data+breach+OR+records+exposed+OR+hack&hl=en-US&gl=US&ceid=US:en', source: 'Google News', category: 'breaches', priority: 'medium' },
+  { url: 'https://news.google.com/rss/search?q=cybersecurity+outage+OR+infrastructure+attack&hl=en-US&gl=US&ceid=US:en', source: 'Google News', category: 'threats', priority: 'medium' },
+  // Additional security news sources
+  { url: 'https://www.helpnetsecurity.com/feed/', source: 'Help Net Security', category: 'threats', priority: 'medium' },
+  { url: 'https://cyberscoop.com/feed/', source: 'CyberScoop', category: 'policy', priority: 'medium' },
+  { url: 'https://www.wired.com/feed/category/security/latest/rss', source: 'WIRED Security', category: 'threats', priority: 'medium' },
+  { url: 'https://techcrunch.com/category/security/feed/', source: 'TechCrunch Security', category: 'threats', priority: 'medium' },
 ];
 
 // ═══════════ THREAT TYPE KNOWLEDGE BASE ═══════════
@@ -366,7 +376,7 @@ export default async function handler(req, res) {
       return true;
     });
 
-    allItems = allItems.slice(0, 50);
+    allItems = allItems.slice(0, 60);
 
     return res.status(200).json({
       items: allItems,
