@@ -1,4 +1,4 @@
-const CACHE = 'threatlens-v5';
+const CACHE = 'threatlens-v6';
 const SHELL = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
