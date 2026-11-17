@@ -7,7 +7,7 @@ const parser = new Parser({
 
 // ═══════════ FREE CYBERSECURITY RSS FEEDS ═══════════
 const FEEDS = [
-  { url: 'https://feeds.feedburner.com/TheHackersNews', source: 'The Hacker News', category: 'threats', priority: 'high' },
+  { url: 'https://feeds.feedburner.com/TheHackersNews', source: 'The Hacker News', site: 'https://thehackernews.com', category: 'threats', priority: 'high' },
   { url: 'https://www.bleepingcomputer.com/feed/', source: 'BleepingComputer', category: 'threats', priority: 'high' },
   { url: 'https://krebsonsecurity.com/feed/', source: 'Krebs on Security', category: 'breaches', priority: 'high' },
   { url: 'https://www.darkreading.com/rss.xml', source: 'Dark Reading', category: 'threats', priority: 'medium' },
@@ -399,6 +399,8 @@ export default async function handler(req, res) {
       fetched_at: new Date().toISOString(),
       count: allItems.length,
       sources: [...new Set(allItems.map(i => i.source))].length,
+      // Every feed the app monitors, so the frontend can list its sources
+      feeds: [...new Map(FEEDS.map(f => [f.source, { name: f.source, site: f.site || new URL(f.url).origin }])).values()],
     });
 
   } catch (err) {

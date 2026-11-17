@@ -13,12 +13,13 @@ Everything runs on RSS feeds with a keyword-based threat classification system. 
 
 ## Features
 
-- 15+ cybersecurity RSS feeds scanned in real time
+- 24 feeds scanned in real time, including mainstream outlets via Google News
 - 12 threat type categories with pre-written explanations
 - Expandable insight panels on every news card
-- Conferences, scholarships, and student opportunities tab
+- Sources tab listing every outlet in the feed, tap one to filter
+- Refresh button to pull the latest stories on demand
 - Installable PWA (iPhone, Android, Windows)
-- Dark terminal aesthetic
+- Editorial design with light and dark modes
 - Works offline via service worker caching
 
 ## Deploy to Vercel
@@ -35,7 +36,6 @@ That's it. Vercel auto-detects the serverless functions in `api/` and the static
 threatlens/
   api/
     news.js          # News API — RSS + threat type detection
-    conferences.js   # Conferences API — RSS + static database
   public/
     index.html       # Frontend PWA
     manifest.json    # PWA manifest
