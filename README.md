@@ -1,52 +1,63 @@
-# 🛰 CyberBrief v3 — 100% Free Cybersecurity Dashboard
+# ThreatLens
 
-Daily cybersecurity news + student conference opportunities. Completely free — no API key, no paid services. Pulls from 15+ RSS feeds.
+Real-time cybersecurity news with **plain-English explanations** and **protection tips** for every story. 100% free — no API keys needed.
+
+## What's Different from CyberBrief
+
+ThreatLens builds on CyberBrief and adds two features to every news card:
+
+- **What This Means (Plain English)** — a non-technical explanation of each threat so anyone can understand the risk
+- **How to Protect Yourself** — actionable prevention tips from the viewer's perspective
+
+Everything runs on RSS feeds with a keyword-based threat classification system. No paid AI APIs.
 
 ## Features
 
-### 🛡 Daily Intel
-Aggregates from: The Hacker News, BleepingComputer, Krebs on Security, Dark Reading, CISA, SecurityWeek, Cisco Talos, Securelist, Naked Security, Infosecurity Magazine, The Daily Swig, CVE Feed, Cloud Security Alliance, Schneier on Security, Recorded Future.
+- 15+ cybersecurity RSS feeds scanned in real time
+- 12 threat type categories with pre-written explanations
+- Expandable insight panels on every news card
+- Conferences, scholarships, and student opportunities tab
+- Installable PWA (iPhone, Android, Windows)
+- Dark terminal aesthetic
+- Works offline via service worker caching
 
-- Smart auto-categorization (Threats, Vulns, Breaches, Cloud, AI, Policy)
-- Priority detection (Critical, High, Medium, Low)
-- Deduplication across sources
-- 30-min Vercel edge caching
+## Deploy to Vercel
 
-### 🎓 Conferences & Opportunities
-- Major conference listings (DEF CON, Black Hat, RSA, BSides, ShmooCon, etc.)
-- **Student scholarships** (WiCyS, ISC², Black Hat, SANS)
-- **Volunteer programs** (DEF CON Goons, BSides, GrrCON)
-- Student competitions (CCDC, NCL)
-- CFP deadlines
-- RSS feed scanning for new announcements
+1. Push this repo to GitHub
+2. Go to [vercel.com](https://vercel.com) and import the repo
+3. Click **Deploy** — no environment variables needed
 
-## Deploy (Free on Vercel)
-
-```bash
-git init && git add . && git commit -m "init"
-git remote add origin https://github.com/YOU/cyberbrief.git
-git push -u origin main
-```
-
-1. Go to vercel.com → Import repo → Deploy
-2. **No environment variables needed!**
-3. Open URL on iPhone Safari → Share → Add to Home Screen
-
-## Cost: $0
-
-Zero. Free Vercel hobby tier + free RSS feeds. No API keys.
+That's it. Vercel auto-detects the serverless functions in `api/` and the static files in `public/`.
 
 ## Project Structure
+
 ```
-cyberbrief/
-├── api/
-│   ├── news.js            # Fetches 15+ cybersec RSS feeds
-│   └── conferences.js     # Conference data + RSS scanning
-├── public/
-│   ├── index.html
-│   ├── manifest.json
-│   ├── sw.js
-│   └── icon-*.png
-├── vercel.json
-└── package.json
+threatlens/
+  api/
+    news.js          # News API — RSS + threat type detection
+    conferences.js   # Conferences API — RSS + static database
+  public/
+    index.html       # Frontend PWA
+    manifest.json    # PWA manifest
+    sw.js            # Service worker
+    icon-192.png     # PWA icon
+    icon-512.png     # PWA icon
+  package.json
+  vercel.json
 ```
+
+## Local Development
+
+```bash
+npm install
+npx vercel dev
+```
+
+Then open `http://localhost:3000`.
+
+## Tech Stack
+
+- Vanilla HTML/CSS/JS (no frameworks)
+- Vercel serverless functions (Node.js)
+- rss-parser for feed parsing
+- Service worker for offline support

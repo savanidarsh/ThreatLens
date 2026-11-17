@@ -1,0 +1,14 @@
+{
+  "name": "ThreatLens — Threat Intel Explained Simply",
+  "short_name": "ThreatLens",
+  "description": "Real-time cybersecurity news with plain-English explanations and protection tips. 100% free.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#060610",
+  "theme_color": "#060610",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
