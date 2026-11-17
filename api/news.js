@@ -209,6 +209,7 @@ const THREAT_KB = {
 };
 
 const GENERAL_ENTRY = {
+  type: 'general',
   label: 'Cybersecurity News',
   icon: '🛡️',
   explanation: 'Staying informed about security developments helps you make better decisions about protecting your digital life — from stronger passwords to spotting new scam techniques.',
@@ -273,6 +274,7 @@ function detectThreatType(title, description) {
 
   const matched = THREAT_KB[bestMatch];
   return {
+    type: bestMatch,
     label: matched.label,
     icon: matched.icon,
     explanation: matched.explanation,
@@ -370,6 +372,7 @@ export default async function handler(req, res) {
         priority: prioritize(item.title, item.summary, item._defaultPri),
         pubDate: item.pubDate,
         // NEW: threat intelligence for plain-English explanations
+        threat_type: threat.type, // key the app uses to pick the family alert text
         threat_label: threat.label,
         threat_icon: threat.icon,
         explanation: threat.explanation,
@@ -380,7 +383,8 @@ export default async function handler(req, res) {
     // Sort: critical first, then high, then by date
     const priOrder = { critical: 0, high: 1, medium: 2, low: 3 };
     allItems.sort((a, b) => {
-      const pDiff = (priOrder[a.priority] || 3) - (priOrder[b.priority] || 3);
+      // ?? not ||: critical is 0, and `0 || 3` would push critical stories to the bottom
+      const pDiff = (priOrder[a.priority] ?? 3) - (priOrder[b.priority] ?? 3);
       if (pDiff !== 0) return pDiff;
       const dA = a.pubDate ? new Date(a.pubDate).getTime() : 0;
       const dB = b.pubDate ? new Date(b.pubDate).getTime() : 0;

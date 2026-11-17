@@ -1,5 +1,5 @@
-const CACHE = 'threatlens-v7';
-const SHELL = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png'];
+const CACHE = 'threatlens-v8';
+const SHELL = ['/', '/data.js', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
