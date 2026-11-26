@@ -194,6 +194,7 @@ window.TL_DATA = {
         alertTitle: "Security alert",
         intro: "I saw this in the news and wanted you to know.",
         inTheNews: "In the news",
+        whatHappened: "What happened",
         whatItMeans: "What it means",
         staySafe: "How to stay safe",
         readMore: "Read more",

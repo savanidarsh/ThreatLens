@@ -1,4 +1,5 @@
 import Parser from 'rss-parser';
+import { explainStory } from '../lib/explain.js';
 
 const parser = new Parser({
   timeout: 8000,
@@ -39,7 +40,7 @@ const FEEDS = [
 // Each threat type has a plain-English explanation + actionable prevention tips
 const THREAT_KB = {
   ransomware: {
-    keywords: ['ransomware', 'ransom', 'encrypt files', 'lockbit', 'blackcat', 'alphv', 'clop', 'conti', 'revil', 'akira', 'rhysida', 'medusa ransomware', 'double extortion', 'ransomware-as-a-service'],
+    keywords: ['ransomware', 'ransom', 'encrypt files', 'lockbit', 'blackcat', 'alphv', 'clop', 'conti', 'revil', 'akira', 'rhysida', 'medusa ransomware', 'double extortion', 'ransom demand', 'ransomware-as-a-service', 'qilin', 'ransomhub', 'black basta', 'play ransomware', 'extortion gang', 'data extortion'],
     label: 'Ransomware',
     icon: '🔒',
     explanation: 'Ransomware is malicious software that locks your files or entire computer and demands payment (usually in cryptocurrency) to unlock them. Attackers often steal your data first and threaten to publish it if you don\'t pay — this is called "double extortion."',
@@ -53,7 +54,7 @@ const THREAT_KB = {
     ]
   },
   phishing: {
-    keywords: ['phishing', 'spear phishing', 'social engineering', 'credential theft', 'fake login', 'credential harvesting', 'business email compromise', 'bec', 'impersonation', 'smishing', 'vishing', 'quishing', 'qr code phishing'],
+    keywords: ['phishing', 'spear phishing', 'social engineering', 'credential theft', 'fake login', 'credential harvesting', 'business email compromise', 'impersonation', 'smishing', 'vishing', 'quishing', 'qr code phishing', 'scam', 'scams', 'scammers', 'fake website', 'fake websites', 'fake app', 'impersonating', 'lure', 'lures', 'fraudulent emails', 'malvertising', 'tech support scam'],
     label: 'Phishing & Social Engineering',
     icon: '🎣',
     explanation: 'Phishing is when attackers send fake emails, texts, or messages that look like they\'re from trusted companies to trick you into giving up passwords, credit card numbers, or personal information. These messages often create urgency to pressure you into acting without thinking.',
@@ -67,7 +68,7 @@ const THREAT_KB = {
     ]
   },
   data_breach: {
-    keywords: ['data breach', 'data leak', 'data exposed', 'records stolen', 'records exposed', 'personal data', 'leaked database', 'credentials leaked', 'information stolen', 'breach notification', 'dark web'],
+    keywords: ['data breach', 'data leak', 'data exposed', 'records stolen', 'records exposed', 'personal data', 'leaked database', 'credentials leaked', 'information stolen', 'breach notification', 'dark web', 'data theft', 'steal data', 'stealing data', 'breach', 'breached', 'hacked', 'leaked', 'exposed data', 'stolen data', 'customer data', 'personal information', 'unauthorized access', 'security incident', 'cyberattack', 'cyber attack'],
     label: 'Data Breach',
     icon: '💧',
     explanation: 'A data breach means a company had its security broken into and people\'s personal information — names, emails, passwords, credit cards, Social Security numbers — was stolen. This stolen data often ends up for sale on the dark web where criminals buy it for identity theft.',
@@ -81,7 +82,7 @@ const THREAT_KB = {
     ]
   },
   vulnerability: {
-    keywords: ['vulnerability', 'cve-', 'zero-day', '0-day', 'exploit', 'rce', 'remote code execution', 'privilege escalation', 'buffer overflow', 'sql injection', 'xss', 'cross-site', 'patch', 'security update', 'security flaw', 'critical flaw', 'actively exploited', 'proof of concept'],
+    keywords: ['vulnerability', 'cve-', 'zero-day', '0-day', 'exploit', 'rce', 'remote code execution', 'privilege escalation', 'buffer overflow', 'sql injection', 'xss', 'cross-site', 'patch', 'security update', 'security flaw', 'critical flaw', 'actively exploited', 'proof of concept', 'flaw', 'flaws', 'bug', 'bugs', 'patches', 'patched', 'fixes', 'exploited', 'exploitation', 'authentication bypass', 'zero-click'],
     label: 'Software Vulnerability',
     icon: '🐛',
     explanation: 'A software vulnerability is a flaw in a program, app, or operating system that attackers can exploit to break in, steal data, or take control of your device. Companies release "patches" (updates) to fix them. "Zero-day" means attackers were using the flaw before a fix existed — especially dangerous.',
@@ -95,7 +96,7 @@ const THREAT_KB = {
     ]
   },
   malware: {
-    keywords: ['malware', 'trojan', 'spyware', 'keylogger', 'botnet', 'worm', 'rootkit', 'backdoor', 'infostealer', 'stealer', 'loader malware', 'dropper', 'remote access trojan', 'rat', 'cryptominer', 'cryptojacking'],
+    keywords: ['malware', 'trojan', 'spyware', 'keylogger', 'worm', 'rootkit', 'backdoor', 'infostealer', 'stealer', 'loader malware', 'dropper', 'remote access trojan', 'cryptominer', 'cryptojacking', 'info-stealer', 'malicious app', 'malicious apps', 'malicious extension', 'malicious extensions', 'wiper', 'banking trojan', 'loader', 'botnet'],
     label: 'Malware',
     icon: '🦠',
     explanation: 'Malware ("malicious software") is any program designed to harm you or your device. This includes viruses, trojans (look legitimate but are harmful), spyware (secretly watches you), and keyloggers (records everything you type). Malware can steal data, spy on you, or mine cryptocurrency using your device.',
@@ -123,7 +124,7 @@ const THREAT_KB = {
     ]
   },
   ai_threat: {
-    keywords: ['ai security', 'artificial intelligence', 'machine learning', 'deepfake', 'llm', 'chatgpt', 'generative ai', 'ai-powered attack', 'ai-generated', 'prompt injection', 'ai scam', 'voice clone', 'ai fraud'],
+    keywords: ['ai security', 'artificial intelligence', 'machine learning', 'deepfake', 'llm', 'chatgpt', 'generative ai', 'ai-powered attack', 'ai-generated', 'prompt injection', 'ai scam', 'voice clone', 'ai fraud', 'deepseek', 'ai agent', 'ai agents', 'agentic', 'ai model', 'ai chatbot', 'openai', 'gemini', 'copilot', 'voice cloning'],
     label: 'AI-Related Threat',
     icon: '🤖',
     explanation: 'Criminals are using AI to create more convincing scams: deepfakes (realistic fake video/audio), AI-generated phishing emails that are harder to spot, voice cloning to impersonate family or bosses, and AI tools that help find and exploit vulnerabilities faster than ever.',
@@ -137,7 +138,7 @@ const THREAT_KB = {
     ]
   },
   identity_theft: {
-    keywords: ['identity theft', 'identity fraud', 'account takeover', 'credential stuffing', 'password spray', 'brute force', 'stolen credentials', 'financial fraud', 'sim swap', 'sim swapping'],
+    keywords: ['identity theft', 'identity fraud', 'account takeover', 'credential stuffing', 'password spray', 'brute force', 'stolen credentials', 'financial fraud', 'sim swap', 'sim swapping', 'fraud', 'scammed', 'stolen identities', 'synthetic identity', 'mfa bypass', 'session hijacking'],
     label: 'Identity Theft & Fraud',
     icon: '🪪',
     explanation: 'Identity theft is when someone steals your personal information and uses it to open accounts, make purchases, or commit crimes in your name. Attackers buy stolen credentials from data breaches or trick you via phishing. SIM swapping — where criminals hijack your phone number — is a growing threat.',
@@ -151,7 +152,7 @@ const THREAT_KB = {
     ]
   },
   supply_chain: {
-    keywords: ['supply chain', 'dependency', 'npm package', 'pypi', 'package compromise', 'backdoor', 'solarwinds', 'software supply chain', 'third-party', 'vendor compromise', 'typosquatting'],
+    keywords: ['supply chain', 'dependency', 'npm package', 'pypi', 'package compromise', 'backdoor', 'solarwinds', 'software supply chain', 'third-party', 'vendor compromise', 'typosquatting', 'malicious package', 'malicious packages', 'npm', 'github actions', 'compromised script', 'malicious update', 'update mechanism', 'update channel'],
     label: 'Supply Chain Attack',
     icon: '🔗',
     explanation: 'A supply chain attack is when hackers compromise a trusted software provider to attack all their customers at once. Instead of attacking you directly, they inject malicious code into a software update or tool you already trust — especially dangerous because it comes from a "safe" source.',
@@ -165,7 +166,7 @@ const THREAT_KB = {
     ]
   },
   iot_hardware: {
-    keywords: ['iot', 'internet of things', 'smart home', 'router', 'firmware', 'hardware vulnerability', 'camera hack', 'smart device', 'connected device', 'scada', 'industrial control', 'ics', 'ot security'],
+    keywords: ['iot', 'internet of things', 'smart home', 'router', 'firmware', 'hardware vulnerability', 'camera hack', 'smart device', 'connected device', 'scada', 'industrial control', 'ics', 'ot security', 'routers', 'cameras', 'smart tv', 'smart tvs', 'edge devices'],
     label: 'IoT & Hardware',
     icon: '📡',
     explanation: 'IoT threats target smart devices — security cameras, smart speakers, routers, smart TVs, baby monitors. Many have weak security and rarely get updates, making them easy targets for hackers who can spy on you or use your device in attacks.',
@@ -179,7 +180,7 @@ const THREAT_KB = {
     ]
   },
   privacy: {
-    keywords: ['privacy', 'tracking', 'surveillance', 'data collection', 'gdpr', 'data protection', 'personal information', 'location tracking', 'browser fingerprint', 'cookies', 'ad tracking'],
+    keywords: ['privacy', 'tracking', 'surveillance', 'data collection', 'gdpr', 'data protection', 'personal information', 'location tracking', 'browser fingerprint', 'cookies', 'ad tracking', 'data broker', 'data brokers', 'spying', 'location data', 'facial recognition', 'consent'],
     label: 'Privacy Concern',
     icon: '👁️',
     explanation: 'Privacy threats involve unauthorized collection or exposure of your personal data — companies tracking your behavior without clear consent, apps collecting more data than needed, surveillance programs, and data brokers selling your information.',
@@ -193,7 +194,7 @@ const THREAT_KB = {
     ]
   },
   government_policy: {
-    keywords: ['regulation', 'legislation', 'policy', 'government', 'sanctions', 'law enforcement', 'fbi', 'doj', 'sec', 'indictment', 'arrested', 'charged', 'cybercrime bust', 'executive order', 'nation-state', 'apt', 'cyberwarfare'],
+    keywords: ['regulation', 'legislation', 'policy', 'government', 'sanctions', 'law enforcement', 'fbi', 'doj', 'indictment', 'arrested', 'charged', 'cybercrime bust', 'executive order', 'nation-state', 'apt', 'cyberwarfare', 'arrest', 'arrests', 'sentenced', 'extradited', 'pleads guilty', 'seized', 'takedown', 'dismantled', 'europol', 'ban', 'fines', 'penalty', 'indicted', 'charged with', 'sanctioned', 'banned', 'fined', 'lawsuit', 'settlement'],
     label: 'Policy & Law Enforcement',
     icon: '⚖️',
     explanation: 'This covers government cybersecurity actions — new laws, law enforcement operations against criminals, sanctions against hacking groups, and policy changes affecting your digital rights. Also includes nation-state operations where governments attack each other\'s infrastructure.',
@@ -254,15 +255,24 @@ function prioritize(title, description, defaultPriority) {
 }
 
 // ═══════════ THREAT TYPE DETECTION ═══════════
+// Keywords only match as whole words, so "rat" doesn't match "operation" and
+// "sec" doesn't match "security". Headline words count double.
+const kwRe = kw => {
+  let body = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/[ -]/g, '[\\s-]');
+  body = /[a-z]y$/.test(kw) ? body.slice(0, -1) + '(?:y|ies)' : body + '(?:s|es)?'; // vulnerability/vulnerabilities, stealer/stealers
+  return new RegExp('(?<![a-z0-9])' + body + '(?![a-z0-9])', 'i');
+};
+const KB_RES = Object.fromEntries(Object.entries(THREAT_KB).map(([t, c]) => [t, c.keywords.map(k => [kwRe(k), Math.min(k.length, 12)])]));
+
 function detectThreatType(title, description) {
-  const text = `${title} ${description}`.toLowerCase();
   let bestMatch = null;
   let bestScore = 0;
 
-  for (const [type, config] of Object.entries(THREAT_KB)) {
+  for (const [type, res] of Object.entries(KB_RES)) {
     let score = 0;
-    for (const kw of config.keywords) {
-      if (text.includes(kw)) score += kw.length; // longer keywords = more specific
+    for (const [re, w] of res) {
+      if (re.test(title)) score += w * 2;
+      else if (description && re.test(description)) score += w;
     }
     if (score > bestScore) {
       bestScore = score;
@@ -270,7 +280,7 @@ function detectThreatType(title, description) {
     }
   }
 
-  if (bestScore < 5) return GENERAL_ENTRY;
+  if (bestScore < 4) return GENERAL_ENTRY;
 
   const matched = THREAT_KB[bestMatch];
   return {
@@ -358,8 +368,17 @@ export default async function handler(req, res) {
 
     // Categorize, prioritize, and detect threat type
     allItems = allItems.map(item => {
-      const threat = detectThreatType(item.title, item.summary);
       const cveMatch = item.title.match(/CVE-\d{4}-\d{4,}/i);
+      let threat = detectThreatType(item.title, item.summary);
+      // Every CVE is a software flaw, even when its description doesn't say so
+      if (threat.type === 'general' && (cveMatch || item.source === 'CVE Feed')) {
+        const v = THREAT_KB.vulnerability;
+        threat = { type: 'vulnerability', label: v.label, icon: v.icon, explanation: v.explanation, prevention: v.prevention };
+      }
+      const story = explainStory({
+        title: item.title, summary: item.summary, type: threat.type,
+        typeExplanation: threat.explanation, cveId: cveMatch ? cveMatch[0].toUpperCase() : null,
+      });
       return {
         // CVE stories get their own column in the app
         is_cve: item.source === 'CVE Feed' || !!cveMatch,
@@ -375,7 +394,9 @@ export default async function handler(req, res) {
         threat_type: threat.type, // key the app uses to pick the family alert text
         threat_label: threat.label,
         threat_icon: threat.icon,
-        explanation: threat.explanation,
+        explanation: story.text || threat.explanation, // plain text, kept for older app versions
+        explain: story.points,                         // [{k: 'What happened', v: '...'}, ...] written for this story
+        words: story.words,                            // jargon used in this story, explained
         prevention: threat.prevention,
       };
     });

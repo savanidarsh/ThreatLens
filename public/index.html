@@ -87,6 +87,14 @@
     summary::after{content:'+';width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.08);display:grid;place-items:center;font-size:17px;font-weight:400;flex-shrink:0}
     details[open] summary::after{content:'–'}
     .body{padding:0 16px 16px;font-size:14px;line-height:1.55;opacity:.9}
+    .pt{margin:0 0 12px}
+    .pt:last-child{margin-bottom:0}
+    .pt b{display:block;font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;opacity:.6;margin-bottom:2px}
+    .words{margin-top:14px;padding-top:12px;border-top:1px solid rgba(0,0,0,.1)}
+    .cve .words{border-top-color:var(--line)}
+    .words>b{display:block;font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;opacity:.6;margin-bottom:4px}
+    .words p{margin:5px 0}
+    .words i{font-style:normal;font-weight:600}
     .body ul{list-style:none}
     .body li{position:relative;padding-left:16px;margin:8px 0}
     .body li::before{content:'';position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:currentColor}
@@ -274,7 +282,7 @@
   </div>
 </dialog>
 
-<script src="/data.js"></script>
+<script src="/data.js?v=2"></script>
 <script>
 // ---------- Setup ----------
 const D=window.TL_DATA||{groups:[],langs:[['en','English']],labelKeys:{},alerts:{}};
@@ -470,6 +478,11 @@ function renderYou(){
 
 // ---------- Family alert ----------
 function typeKey(n){return n.threat_type||D.labelKeys[n.threat_label]||'general'}
+// The story-specific "What happened" sentence (English only, since it is generated per story)
+function happened(n){
+  const p=Array.isArray(n.explain)&&n.explain.find(x=>x.k==='What happened');
+  return p&&!/^The headline is all/.test(p.v)?p.v:'';
+}
 function alertText(n,lang){
   const A=D.alerts[lang]||D.alerts.en,t=A.types[typeKey(n)]||A.types.general,u=A.ui;
   const lines=[
@@ -478,6 +491,7 @@ function alertText(n,lang){
     '',
     u.inTheNews+': "'+n.title+'"'+(n.source?' ('+n.source+')':''),
     '',
+    ...(u.whatHappened&&happened(n)?[u.whatHappened+': '+happened(n),'']:[]),
     u.whatItMeans+': '+t.means,
     '',
     u.staySafe+':',
@@ -489,7 +503,7 @@ function alertText(n,lang){
 }
 // WhatsApp shows *text* in bold, so bold the headings for that button only
 function waText(text,lang){
-  const u=(D.alerts[lang]||D.alerts.en).ui,heads=[u.inTheNews+':',u.whatItMeans+':',u.staySafe+':'];
+  const u=(D.alerts[lang]||D.alerts.en).ui,heads=[u.inTheNews+':',u.whatHappened+':',u.whatItMeans+':',u.staySafe+':'].filter(h=>h!=='undefined:');
   return text.split('\n').map((l,i)=>{
     if(i===0&&l.trim())return '*'+l.trim()+'*';
     const h=heads.find(x=>l.startsWith(x));
@@ -592,11 +606,20 @@ function renderNews(){
     :`<div class="cards">${promo}</div><div class="empty"${promo?' style="margin-top:14px"':''}>No stories match.</div>`;
 }
 
+// "What this means": the points written for this story, plus the jargon it uses.
+// Stories saved before this version only have the plain explanation text.
+function explainHtml(n){
+  if(!Array.isArray(n.explain)||!n.explain.length)return esc(n.explanation);
+  const pts=n.explain.map(p=>`<p class="pt"><b>${esc(p.k)}</b>${esc(p.v)}</p>`).join('');
+  const w=Array.isArray(n.words)&&n.words.length?`<div class="words"><b>Words in this story</b>${n.words.map(x=>`<p><i>${esc(x.term)}</i>: ${esc(x.def)}</p>`).join('')}</div>`:'';
+  return pts+w;
+}
+
 function story(n,k){
   const i=R.push(n)-1,u=link(n.url),pri=n.priority;
   const badges=youBadge(n)+(pri==='critical'?'<span class="b crit">Critical</span>':pri==='high'?'<span class="b high">High</span>':'')+(n.threat_label?`<span class="b">${esc(n.threat_label)}</span>`:'');
   const when=n.pubDate?ago(n.pubDate):'';
-  const explain=n.explanation?`<details><summary>What this means</summary><div class="body">${esc(n.explanation)}</div></details>`:'';
+  const explain=n.explanation||n.explain?`<details><summary>What this means</summary><div class="body">${explainHtml(n)}</div></details>`:'';
   const protect=n.prevention&&n.prevention.length?`<details><summary>How to protect yourself</summary><div class="body"><ul>${n.prevention.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div></details>`:'';
   const saved=isSaved(n);
   return `<article class="card c${k%5}" style="animation-delay:${Math.min(k,8)*40}ms">
@@ -620,7 +643,7 @@ function cveItem(n){
   const sum=rest&&n.summary&&n.summary!==title?`<p class="sum">${esc(n.summary)}</p>`:'';
   const when=n.pubDate?ago(n.pubDate):'';
   const tips=n.prevention&&n.prevention.length?`<ul style="margin-top:8px">${n.prevention.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:'';
-  const help=n.explanation?`<details><summary>Explain and protect</summary><div class="body">${esc(n.explanation)}${tips}</div></details>`:'';
+  const help=n.explanation||n.explain?`<details><summary>Explain and protect</summary><div class="body">${explainHtml(n)}${tips?`<div class="words"><b>How to protect yourself</b>${tips}</div>`:''}</div></details>`:'';
   return `<article class="cve">
     <div class="ids">${id?`<span class="id">${esc(id)}</span>`:''}${n.priority==='critical'?'<span class="b crit">Critical</span>':''}${youBadge(n)}</div>
     <h3>${u?`<a href="${u}" target="_blank" rel="noopener">${esc(title)}</a>`:esc(title)}</h3>

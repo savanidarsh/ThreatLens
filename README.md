@@ -8,7 +8,8 @@ Security news for people who are not security experts. Every story comes with a 
 
 - **Does this affect me?** Pick the phones, apps and services you use (or type your own). Stories that mention them get a "May affect you" badge and collect in the For You tab. The list is stored in the browser on your device and is never sent to a server.
 - **Family alert.** "Tell family" on any story builds a short, plain-language warning in English, Hindi, Gujarati or Spanish, ready to send on WhatsApp, share, or copy. The headline stays in English; the explanation and tips are pre-written translations.
-- **What this means / How to protect yourself.** Every story is matched to one of 12 threat types, each with a pre-written explanation and prevention tips.
+- **What this means.** Written for each story: what happened, who it affects, whether there's a fix, plus any jargon in that story explained. Built by `lib/explain.js` from the headline and summary, with no AI service. If a story has too little detail, it uses the article's own first sentence.
+- **How to protect yourself.** Every story is matched to one of 12 threat types, each with prevention tips.
 
 ## Other features
 
@@ -40,6 +41,8 @@ Vercel serves the serverless function in `api/` and the static files in `public/
 threatlens/
   api/
     news.js          # News API: RSS feeds, threat type detection, CVE split
+  lib/
+    explain.js       # Writes the per-story "What this means" explanation
   public/
     index.html       # The app (HTML, CSS and JS in one file)
     data.js          # Product catalog and family alert translations
